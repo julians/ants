@@ -1,9 +1,8 @@
 boolean[][] food;
-int[][] scent;
-QVector2D antHill;
-Ant[] ants = new Ant[99];
-int numberOfAnts = 0;
+float[][] scent;
+AntHill antHill;
 Rectangle boundingBox;
+int foodValue = 600;
 
 void setup ()
 {
@@ -13,11 +12,17 @@ void setup ()
   background(255);
   fill(0);
   food = new boolean[height][width];
-  scent = new int[height][width];
-  antHill = new QVector2D(random(40, height-40), random(40, width-40));
+  scent = new float[height][width];
+  antHill = new AntHill(new QVector2D(random(40, height-40), random(40, width-40)));
   boundingBox = new Rectangle(0, 0, height, width);
   
   growFood();
+  
+  for (int i = 0; i < scent.length; i++) {
+    for (int j = 0; j < scent[i].length; j++) {
+      scent[i][j] = 0;
+    }
+  }
 }
 
 void draw ()
@@ -26,9 +31,17 @@ void draw ()
   
   background(255);
   
-  noStroke();
-  fill(0);
-  ellipse(antHill.x, antHill.y, 10, 10);
+  for (int i = 0; i < scent.length; i++) {
+    for (int j = 0; j < scent[i].length; j++) {
+      scent[i][j] *= 0.999;
+      
+      if (scent[i][j] > 0.5) {
+        println(scent[i][j]);
+        stroke(255 - (scent[i][j] * 10));
+        point(i, j);
+      }
+    }
+  }
   
   stroke(128, 255, 128);
   for (int i = 0; i < food.length; i++) {
@@ -38,15 +51,12 @@ void draw ()
     }
   }
   
-  for (int i = 0; i < numberOfAnts; i++) {
-    ants[i].draw();
-  }
+  antHill.draw();
 }
 
 void keyPressed ()
 {
-  ants[numberOfAnts] = new Ant(antHill);
-  numberOfAnts++;
+  antHill.addAnt();
 }
 
 void growFood ()

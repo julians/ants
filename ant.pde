@@ -1,6 +1,6 @@
 class Ant
 {
-  QVector2D antHill;
+  AntHill antHill;
   QVector2D position;
   QVector2D direction;
   QVector2D idealDirection;
@@ -16,10 +16,10 @@ class Ant
   float rangeOfSight = 5;
   QVector2D nearestFood = null;
   
-  Ant (QVector2D _position)
+  Ant (AntHill _antHill)
   {
-    this.antHill = _position;
-    this.position = _position.get();
+    this.antHill = _antHill;
+    this.position = this.antHill.getPosition();
     this.hitBox = new Rectangle((int) this.position.x-(this.size/2), (int) this.position.y-(this.size/2), this.size, this.size);
   }
   
@@ -39,8 +39,11 @@ class Ant
   
   void draw ()
   {
-    if (this.appetite > 0 && this.isHome()) {
-      this.appetite -= 2;
+    if (this.isHome() && this.hasFood) {
+      this.antHill.addFood(foodValue);
+      this.hasFood = false;
+    } else if (this.appetite > 0 && this.isHome()) {
+      this.appetite -= this.antHill.takeFood(2);
     } else {
       if (this.appetite <= 0) this.leaveAntHill();
       this.go();
@@ -49,7 +52,7 @@ class Ant
   
   boolean isHome ()
   {
-    QVector2D temp = this.antHill.get();
+    QVector2D temp = this.antHill.getPosition();
     temp.sub(this.position);
     return (temp.mag() < 2);
   }
@@ -68,7 +71,7 @@ class Ant
          // yay, we have the food!
          this.hasFood = true;
          this.exploring = false;
-         this.finalDestination.set(this.antHill.get());
+         this.finalDestination.set(this.antHill.getPosition());
          food[(int) this.nearestFood.x][(int) this.nearestFood.y] = false;
        } else {
          // reached our random destination, now go look somewhere else
@@ -78,7 +81,7 @@ class Ant
     } else if (this.appetite > this.maxAppetite) {
       // go home if we are too hungry
       this.exploring = false;
-      this.finalDestination.set(this.antHill.get());
+      this.finalDestination.set(this.antHill.getPosition());
     }
     
     // stray off course if we’re looking for stuff
@@ -114,6 +117,8 @@ class Ant
 
     // all this walking around is making us hungry
     this.appetite++;
+    
+    if (this.hasFood) scent[(int) this.position.x][(int) this.position.y] += 5;
   }
   
   void updateNearestFood ()
