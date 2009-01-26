@@ -2,13 +2,13 @@ class AntHill
 {
   QVector2D position;
   int food;
-  Ant[] ants = new Ant[99];
-  int numberOfAnts = 0;
+  ArrayList ants;
   
   AntHill (QVector2D _position)
   {
     this.position = _position;
     this.food = 6000;
+    this.ants = new ArrayList();
   }
   
   void addFood (int _food)
@@ -19,7 +19,7 @@ class AntHill
   int takeFood (int _food)
   {
     if (this.food > _food) {
-      this.food -= _food;
+      //this.food -= _food;
       return _food;
     } else {
       return 0;
@@ -28,8 +28,7 @@ class AntHill
   
   void addAnt ()
   {
-    this.ants[this.numberOfAnts] = new Ant(this);
-    this.numberOfAnts++;
+    this.ants.add(new Ant(this));
   }
   
   void draw ()
@@ -38,8 +37,10 @@ class AntHill
     fill(0);
     ellipse(this.position.x, this.position.y, 10, 10);
     
-    for (int i = 0; i < this.numberOfAnts; i++) {
-      this.ants[i].draw();
+    Ant ant;
+    for (int i = 0; i < this.ants.size(); i++) {
+      ant = (Ant) this.ants.get(i);
+      ant.draw();
     }
   }
   

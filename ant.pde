@@ -85,18 +85,18 @@ class Ant
         
     this.updateIdealDirection();
     
-     if (this.idealDirection.mag() < this.speed) {
-       if (this.nearestFood != null) {
-         // yay, we have the food!
-         this.hasFood = true;
-         this.exploring = false;
-         this.finalDestination.set(this.antHill.getPosition());
-         food[(int) this.nearestFood.x][(int) this.nearestFood.y] = false;
-       } else {
-         // reached our random destination, now go look somewhere else
-         this.newFinalDestination();
-       }
-       this.updateIdealDirection();
+    if (this.idealDirection.mag() < this.speed) {
+      if (this.nearestFood != null) {
+        // yay, we have the food!
+        this.hasFood = true;
+        this.exploring = false;
+        this.finalDestination.set(this.antHill.getPosition());
+        food[(int) this.nearestFood.x][(int) this.nearestFood.y] = false;
+      } else {
+        // reached our random destination, now go look somewhere else
+        this.newFinalDestination();
+      }
+      this.updateIdealDirection();
     } else if (this.appetite > this.maxAppetite) {
       // go home if we are too hungry
       this.exploring = false;
@@ -104,7 +104,7 @@ class Ant
     }
     
     // stray off course if we’re looking for stuff
-    int randomness = this.exploring ? 20 : 10;
+    int randomness = this.exploring ? 20 : 5;
     
     // figure out actual direction
     this.direction.rotate(random(randomness*-1, randomness));
