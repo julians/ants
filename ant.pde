@@ -15,6 +15,8 @@ class Ant
   int whiteness = 0;
   float rangeOfSight = 5;
   QVector2D nearestFood = null;
+  float rangeOfSmell = 5;
+  QVector2D nearestSmell = null;
   
   Ant (AntHill _antHill)
   {
@@ -23,9 +25,19 @@ class Ant
     this.hitBox = new Rectangle((int) this.position.x-(this.size/2), (int) this.position.y-(this.size/2), this.size, this.size);
   }
   
-  float getAngle()
+  float getAngle ()
   {
-    return (float) Math.toDegrees(this.direction.heading2D()) - (float) Math.toDegrees(this.idealDirection.heading2D());
+    return (float) Math.toDegrees(this.direction.heading2D());
+  }
+  
+  float getIdealAngle ()
+  {
+    return (float) Math.toDegrees(this.idealDirection.heading2D());
+  }
+  
+  float getDeviation ()
+  {
+    return this.getAngle() - this.getIdealAngle();
   }
   
   void leaveAntHill ()
@@ -59,11 +71,18 @@ class Ant
   
   void go ()
   {
-    this.updateNearestFood();
-    if (this.nearestFood != null) {
-      this.finalDestination.set(this.nearestFood.get());
+    if (!this.hasFood) {
+      this.updateNearestFood();
+      if (this.nearestFood != null) {
+        this.finalDestination.set(this.nearestFood.get());
+      } else {
+        this.smell();
+        if (this.nearestSmell != null) {
+          this.finalDestination.set(this.nearestSmell.get());
+        }
+      }
     }
-    
+        
     this.updateIdealDirection();
     
      if (this.idealDirection.mag() < this.speed) {
@@ -89,7 +108,7 @@ class Ant
     
     // figure out actual direction
     this.direction.rotate(random(randomness*-1, randomness));
-    if (abs(this.getAngle()) > 45) {
+    if (abs(this.getDeviation()) > 45) {
       this.direction.set(this.idealDirection.get());
       this.direction.rotate(random(randomness*-1/2, randomness/2));
     }
@@ -103,13 +122,12 @@ class Ant
     this.position.add(this.direction);
     this.updateHitBox();
 
-
+    // draw the ant
     if (this.hasFood) {
       fill(128, 255, 128);
     } else {
       // set colour based on appetite
       this.whiteness = (int) map(this.appetite, 0, this.maxAppetite, 0, 128);
-      // draw ant
       fill(255, whiteness, whiteness);
     }
     noStroke();
@@ -118,6 +136,7 @@ class Ant
     // all this walking around is making us hungry
     this.appetite++;
     
+    // leave some pheromones if we have food
     if (this.hasFood) scent[(int) this.position.x][(int) this.position.y] += 5;
   }
   
@@ -154,6 +173,65 @@ class Ant
     }
     
     this.nearestFood = foodPosition;
+  }
+  
+  void smell ()
+  {
+    float angle = this.getAngle();
+    int xLow = 0;
+    int xHigh = 0;
+    int yLow = 0;
+    int yHigh = 0;
+    
+    // this is where studying computer science would really pay off…
+    if (angle > -45 && angle < 45) {
+      xLow = (int) (this.position.x + 1);
+      xHigh = (int) (this.position.x + this.rangeOfSmell);
+      yLow = (int) (this.position.y - this.rangeOfSmell);
+      yHigh = (int) (this.position.y + this.rangeOfSmell);
+    } else if (angle > 45 && angle < 135) {
+      xLow = (int) (this.position.x - this.rangeOfSmell);
+      xHigh = (int) (this.position.x + this.rangeOfSmell);
+      yLow = (int) (this.position.y + 1);
+      yHigh = (int) (this.position.y + this.rangeOfSmell);
+    } else if (angle < -45 && angle > -135) {
+      xLow = (int) (this.position.x - this.rangeOfSmell);
+      xHigh = (int) (this.position.x + this.rangeOfSmell);
+      yLow = (int) (this.position.y - this.rangeOfSmell);
+      yHigh = (int) (this.position.y - 1);
+    } else {
+      xLow = (int) (this.position.x - this.rangeOfSmell);
+      xHigh = (int) (this.position.x - 1);
+      yLow = (int) (this.position.y - this.rangeOfSmell);
+      yHigh = (int) (this.position.y + this.rangeOfSmell);
+    }
+    
+    if (xLow < 0) xLow = 0;
+    if (yLow < 0) yLow = 0;
+    if (xHigh > width) xHigh = width;
+    if (yHigh > height) yHigh = height;
+    
+    QVector2D temp = new QVector2D();
+    QVector2D smellPosition = null;
+    float lowestDistance = this.rangeOfSmell;
+    
+    float distance = this.rangeOfSmell + 1;
+    
+    for (int i = xLow; i < xHigh; i++) {
+      for (int j = yLow; j < yHigh; j++) {
+        if (scent[i][j] > 0.5) {
+          temp.set(i, j);
+          temp.sub(this.position);
+          distance = temp.mag();
+          if (distance < this.rangeOfSmell && distance < lowestDistance) {
+            lowestDistance = distance;
+            smellPosition = new QVector2D(i, j);
+          }
+        }
+      }
+    }
+    
+    this.nearestSmell = smellPosition;
   }
   
   void updateIdealDirection ()

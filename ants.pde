@@ -36,14 +36,13 @@ void draw ()
       scent[i][j] *= 0.999;
       
       if (scent[i][j] > 0.5) {
-        println(scent[i][j]);
         stroke(255 - (scent[i][j] * 10));
         point(i, j);
       }
     }
   }
   
-  stroke(128, 255, 128);
+  stroke(0, 255, 0);
   for (int i = 0; i < food.length; i++) {
     boolean[] foodcol = food[i];
     for (int j = 0; j < foodcol.length; j++) {
