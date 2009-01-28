@@ -18,6 +18,9 @@ class Ant
   float rangeOfSmell = 5;
   QVector2D nearestSmell = null;
   
+  QVector2D tempVector1 = new QVector2D(0, 0);
+  QVector2D tempVector2 = new QVector2D(0, 0);
+  
   Ant (AntHill _antHill)
   {
     this.antHill = _antHill;
@@ -140,9 +143,9 @@ class Ant
     
     // leave some pheromones if we have food
     if (this.hasFood) {
-      scent[(int) constrain(this.position.x, 0, width)][(int) constrain(this.position.y, 0, height)] += 5;
+      scent[(int) constrain(this.position.x, 0, width-1)][(int) constrain(this.position.y, 0, height-1)] += 5;
     } else {
-      paths[(int) constrain(this.position.x, 0, width)][(int) constrain(this.position.y, 0, height)] += 5;
+      paths[(int) constrain(this.position.x, 0, width-1)][(int) constrain(this.position.y, 0, height-1)] += 5;
     }
   }
   
@@ -158,8 +161,7 @@ class Ant
     if (xHigh > width) xHigh = width;
     if (yHigh > height) yHigh = height;
     
-    QVector2D temp = new QVector2D();
-    QVector2D foodPosition = null;
+    this.tempVector2 = null;
     float lowestDistance = this.rangeOfSight;
     
     float distance = this.rangeOfSight + 1;
@@ -167,18 +169,18 @@ class Ant
     for (int i = xLow; i < xHigh; i++) {
       for (int j = yLow; j < yHigh; j++) {
         if (food[i][j]) {
-          temp.set(i, j);
-          temp.sub(this.position);
-          distance = temp.mag();
+          this.tempVector1.set(i, j);
+          this.tempVector1.sub(this.position);
+          distance = this.tempVector1.mag();
           if (distance < this.rangeOfSight && distance < lowestDistance) {
             lowestDistance = distance;
-            foodPosition = new QVector2D(i, j);
+            this.tempVector2 = new QVector2D(i, j);
           }
         }
       }
     }
     
-    this.nearestFood = foodPosition;
+    this.nearestFood = this.tempVector2 == null ? null : this.tempVector2.get();
   }
   
   void smell ()
@@ -217,8 +219,7 @@ class Ant
     if (xHigh > width) xHigh = width;
     if (yHigh > height) yHigh = height;
     
-    QVector2D temp = new QVector2D();
-    QVector2D smellPosition = null;
+    this.tempVector2 = null;
     float lowestDistance = this.rangeOfSmell;
     
     float distance = this.rangeOfSmell + 1;
@@ -226,18 +227,18 @@ class Ant
     for (int i = xLow; i < xHigh; i++) {
       for (int j = yLow; j < yHigh; j++) {
         if (scent[i][j] > 0.5) {
-          temp.set(i, j);
-          temp.sub(this.position);
-          distance = temp.mag();
+          this.tempVector1.set(i, j);
+          this.tempVector1.sub(this.position);
+          distance = this.tempVector1.mag();
           if (distance < this.rangeOfSmell && distance < lowestDistance) {
             lowestDistance = distance;
-            smellPosition = new QVector2D(i, j);
+            this.tempVector2 = new QVector2D(i, j);
           }
         }
       }
     }
     
-    this.nearestSmell = smellPosition;
+    this.nearestSmell = this.tempVector2 == null ? null : this.tempVector2.get();
   }
   
   void updateIdealDirection ()
