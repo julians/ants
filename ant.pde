@@ -121,23 +121,30 @@ class Ant
     // update position, hitbox
     this.position.add(this.direction);
     this.updateHitBox();
-
+    
+    
     // draw the ant
-    if (this.hasFood) {
-      fill(128, 255, 128);
-    } else {
-      // set colour based on appetite
-      this.whiteness = (int) map(this.appetite, 0, this.maxAppetite, 0, 128);
-      fill(255, whiteness, whiteness);
+    if (drawObjects) {
+      if (this.hasFood) {
+        fill(128, 255, 128);
+      } else {
+        // set colour based on appetite
+        this.whiteness = (int) map(this.appetite, 0, this.maxAppetite, 0, 128);
+        fill(255, whiteness, whiteness);
+      }
+      noStroke();
+      ellipse(this.position.x, this.position.y, this.size, this.size);   
     }
-    noStroke();
-    ellipse(this.position.x, this.position.y, this.size, this.size);   
 
     // all this walking around is making us hungry
     this.appetite++;
     
     // leave some pheromones if we have food
-    if (this.hasFood) scent[(int) this.position.x][(int) this.position.y] += 5;
+    if (this.hasFood) {
+      scent[(int) this.position.x][(int) this.position.y] += 5;
+    } else {
+      paths[(int) this.position.x][(int) this.position.y] += 5;
+    }
   }
   
   void updateNearestFood ()
@@ -183,7 +190,7 @@ class Ant
     int yLow = 0;
     int yHigh = 0;
     
-    // this is where studying computer science would really pay off…
+    // this is where paying attention in math classes would have really helped…
     if (angle > -45 && angle < 45) {
       xLow = (int) (this.position.x + 1);
       xHigh = (int) (this.position.x + this.rangeOfSmell);

@@ -33,9 +33,11 @@ class AntHill
   
   void draw ()
   {
-    noStroke();
-    fill(0);
-    ellipse(this.position.x, this.position.y, 10, 10);
+    if (drawObjects) {
+      noStroke();
+      fill(0);
+      ellipse(this.position.x, this.position.y, 10, 10);
+    }
     
     Ant ant;
     for (int i = 0; i < this.ants.size(); i++) {
