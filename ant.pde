@@ -71,7 +71,7 @@ class Ant
   
   void go ()
   {
-    if (!this.hasFood) {
+    if (!this.hasFood && this.appetite < this.maxAppetite) {
       this.updateNearestFood();
       if (this.nearestFood != null) {
         this.finalDestination.set(this.nearestFood.get());
@@ -108,7 +108,7 @@ class Ant
     
     // figure out actual direction
     this.direction.rotate(random(randomness*-1, randomness));
-    if (abs(this.getDeviation()) > 45) {
+    if (abs(this.getDeviation()) > (randomness * 2)) {
       this.direction.set(this.idealDirection.get());
       this.direction.rotate(random(randomness*-1/2, randomness/2));
     }
@@ -121,7 +121,6 @@ class Ant
     // update position, hitbox
     this.position.add(this.direction);
     this.updateHitBox();
-    
     
     // draw the ant
     if (drawObjects) {
@@ -141,9 +140,9 @@ class Ant
     
     // leave some pheromones if we have food
     if (this.hasFood) {
-      scent[(int) this.position.x][(int) this.position.y] += 5;
+      scent[(int) constrain(this.position.x, 0, width)][(int) constrain(this.position.y, 0, height)] += 5;
     } else {
-      paths[(int) this.position.x][(int) this.position.y] += 5;
+      paths[(int) constrain(this.position.x, 0, width)][(int) constrain(this.position.y, 0, height)] += 5;
     }
   }
   

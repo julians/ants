@@ -1,7 +1,7 @@
 boolean[][] food;
 float[][] scent;
 float[][] paths;
-AntHill antHill;
+ArrayList antHills;
 Rectangle boundingBox;
 int foodValue = 600;
 boolean drawObjects = true;
@@ -9,15 +9,16 @@ boolean drawPaths = false;
 
 void setup ()
 {
-  frameRate(200);
+  frameRate(6000);
   size(400, 400);
-  smooth();
+  //smooth();
   background(255);
   fill(0);
   food = new boolean[height][width];
   scent = new float[height][width];
   paths = new float[height][width];
-  antHill = new AntHill(new QVector2D(random(40, height-40), random(40, width-40)));
+  antHills = new ArrayList();
+  antHills.add(new AntHill(new QVector2D(random(40, height-40), random(40, width-40))));
   boundingBox = new Rectangle(0, 0, height, width);
   
   growFood();
@@ -54,27 +55,39 @@ void draw ()
     }
   }
   
-  stroke(0, 255, 0);
-  for (int i = 0; i < food.length; i++) {
-    boolean[] foodcol = food[i];
-    for (int j = 0; j < foodcol.length; j++) {
-      if (foodcol[j]) point(i, j);
+  if (drawObjects) {
+    stroke(0, 255, 0);
+    for (int i = 0; i < food.length; i++) {
+      boolean[] foodcol = food[i];
+      for (int j = 0; j < foodcol.length; j++) {
+        if (foodcol[j]) point(i, j);
+      }
     }
   }
   
-  antHill.draw();
+  AntHill antHill;
+  for (int i = 0; i < this.antHills.size(); i++) {
+    antHill = (AntHill) this.antHills.get(i);
+    antHill.draw();
+  }
 }
 
 void keyPressed ()
 {
   if (key == ' ') {
-    antHill.addAnt();
+    AntHill antHill;
+    for (int i = 0; i < this.antHills.size(); i++) {
+      antHill = (AntHill) this.antHills.get(i);
+      antHill.addAnt();
+    }
   } else if (key == 'p') {
     drawPaths = drawPaths ? false : true;
   } else if (key == 'o') {
     drawObjects = drawObjects ? false : true;
   } else if (key == 'n') {
     setup();
+  } else if (key == 'a') {
+    antHills.add(new AntHill(new QVector2D(random(40, height-40), random(40, width-40))));
   }
 }
 
