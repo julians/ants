@@ -44,7 +44,7 @@ void draw ()
     for (int j = 0; j < scent[i].length; j++) {
       
       if (paths[i][j] > 0.25) {
-        paths[i][j] *= 0.999;
+        paths[i][j] *= 0.99;
         if (drawPaths) {
           stroke(255, 255 - (paths[i][j] * 20), 255 - (paths[i][j] * 20));
           point(i, j);
@@ -54,7 +54,7 @@ void draw ()
       }
       
       if (scent[i][j] > 0.25) {
-        scent[i][j] *= 0.999;
+        scent[i][j] *= 0.99;
         if (drawPaths) {
           stroke(255 - (scent[i][j] * 20), 255, 255 - (scent[i][j] * 20));
           point(i, j);
@@ -75,8 +75,8 @@ void draw ()
   }
   
   AntHill antHill;
-  for (int i = 0; i < this.antHills.size(); i++) {
-    antHill = (AntHill) this.antHills.get(i);
+  for (int i = 0; i < antHills.size(); i++) {
+    antHill = (AntHill) antHills.get(i);
     antHill.draw();
   }
 }
@@ -85,8 +85,8 @@ void keyPressed ()
 {
   if (key == ' ') {
     AntHill antHill;
-    for (int i = 0; i < this.antHills.size(); i++) {
-      antHill = (AntHill) this.antHills.get(i);
+    for (int i = 0; i < antHills.size(); i++) {
+      antHill = (AntHill) antHills.get(i);
       antHill.addAnt();
     }
   } else if (key == 'p') {

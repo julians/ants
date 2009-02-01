@@ -13,9 +13,9 @@ class Ant
   Rectangle hitBox;
   boolean exploring = true;
   int whiteness = 0;
-  float rangeOfSight = 5;
+  float rangeOfSight = 10;
   QVector2D nearestFood = null;
-  float rangeOfSmell = 5;
+  float rangeOfSmell = 10;
   QVector2D nearestSmell = null;
   
   QVector2D tempVector1 = new QVector2D(0, 0);
@@ -143,9 +143,12 @@ class Ant
     
     // leave some pheromones if we have food
     if (this.hasFood) {
-      scent[(int) constrain(this.position.x, 0, width-1)][(int) constrain(this.position.y, 0, height-1)] += 5;
+      scent[(int) constrain(this.position.x, 0, width-1)][(int) constrain(this.position.y, 0, height-1)] += 10;
     } else {
-      paths[(int) constrain(this.position.x, 0, width-1)][(int) constrain(this.position.y, 0, height-1)] += 5;
+      if (scent[(int) constrain(this.position.x, 0, width-1)][(int) constrain(this.position.y, 0, height-1)] > 0.5) {
+        scent[(int) constrain(this.position.x, 0, width-1)][(int) constrain(this.position.y, 0, height-1)] *= 5;
+      }
+      paths[(int) constrain(this.position.x, 0, width-1)][(int) constrain(this.position.y, 0, height-1)] += 10;
     }
   }
   
