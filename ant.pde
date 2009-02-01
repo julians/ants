@@ -140,11 +140,13 @@ class Ant
     
     // leave some pheromones if we have food
     if (this.hasFood) {
-      scent[(int) constrain(this.position.x, 0, width-1)][(int) constrain(this.position.y, 0, height-1)] += 10;
-      scent[(int) constrain(this.position.x, 0, width-1) - 1][(int) constrain(this.position.y, 0, height-1)] += 10;
-      scent[(int) constrain(this.position.x, 0, width-1) + 1][(int) constrain(this.position.y, 0, height-1)] += 10;
-      scent[(int) constrain(this.position.x, 0, width-1)][(int) constrain(this.position.y, 0, height-1) - 1] += 10;
-      scent[(int) constrain(this.position.x, 0, width-1)][(int) constrain(this.position.y, 0, height-1) + 1] += 10;
+      int constrainedX = (int) constrain(this.position.x, 0, width-1);
+      int constrainedY = (int) constrain(this.position.y, 0, height-1);
+      scent[constrainedX][constrainedY] += 10;
+      scent[constrainedX - 1][constrainedY] += 10;
+      scent[constrainedX + 1][constrainedY] += 10;
+      scent[constrainedX][constrainedY - 1] += 10;
+      scent[constrainedX][constrainedY + 1] += 10;
     } else {
       /*
       if (scent[(int) constrain(this.position.x, 0, width-1)][(int) constrain(this.position.y, 0, height-1)] > 0.5) {
