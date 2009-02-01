@@ -10,7 +10,6 @@ class Ant
   int size = 4;
   int appetite = 0;
   int maxAppetite = width*2;
-  Rectangle hitBox;
   boolean exploring = true;
   int whiteness = 0;
   float rangeOfSight = 10;
@@ -25,7 +24,6 @@ class Ant
   {
     this.antHill = _antHill;
     this.position = this.antHill.getPosition();
-    this.hitBox = new Rectangle((int) this.position.x-(this.size/2), (int) this.position.y-(this.size/2), this.size, this.size);
   }
   
   float getAngle ()
@@ -121,9 +119,8 @@ class Ant
     float multiplier = this.idealDirection.mag() > this.speed ? this.speed : this.idealDirection.mag();
     this.direction.mult(this.speed);
 
-    // update position, hitbox
+    // update position
     this.position.add(this.direction);
-    this.updateHitBox();
     
     // draw the ant
     if (drawObjects) {
@@ -144,10 +141,16 @@ class Ant
     // leave some pheromones if we have food
     if (this.hasFood) {
       scent[(int) constrain(this.position.x, 0, width-1)][(int) constrain(this.position.y, 0, height-1)] += 10;
+      scent[(int) constrain(this.position.x, 0, width-1) - 1][(int) constrain(this.position.y, 0, height-1)] += 10;
+      scent[(int) constrain(this.position.x, 0, width-1) + 1][(int) constrain(this.position.y, 0, height-1)] += 10;
+      scent[(int) constrain(this.position.x, 0, width-1)][(int) constrain(this.position.y, 0, height-1) - 1] += 10;
+      scent[(int) constrain(this.position.x, 0, width-1)][(int) constrain(this.position.y, 0, height-1) + 1] += 10;
     } else {
+      /*
       if (scent[(int) constrain(this.position.x, 0, width-1)][(int) constrain(this.position.y, 0, height-1)] > 0.5) {
         scent[(int) constrain(this.position.x, 0, width-1)][(int) constrain(this.position.y, 0, height-1)] *= 5;
       }
+      */
       paths[(int) constrain(this.position.x, 0, width-1)][(int) constrain(this.position.y, 0, height-1)] += 10;
     }
   }
@@ -253,10 +256,5 @@ class Ant
   void newFinalDestination ()
   {
     this.finalDestination.set(random(0, height), random(0, width));
-  }
-  
-  void updateHitBox ()
-  {
-    this.hitBox.setLocation((int) this.position.x-(this.size/2), (int) this.position.y-(this.size/2));
   }
 }

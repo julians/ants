@@ -2,14 +2,21 @@ boolean[][] food;
 float[][] scent;
 float[][] paths;
 ArrayList antHills;
-Rectangle boundingBox;
 int foodValue = 600;
 boolean drawObjects = true;
 boolean drawPaths = false;
+int lasttime = 0;
+
+boolean drawP = false;
+boolean drawS = false;
+
+float r;
+float g;
+float b;
 
 void setup ()
 {
-  frameRate(600);
+  frameRate(200);
   size(400, 400, P2D);
   //smooth();
   background(255);
@@ -19,7 +26,6 @@ void setup ()
   paths = new float[height][width];
   antHills = new ArrayList();
   antHills.add(new AntHill(new QVector2D(random(40, height-40), random(40, width-40))));
-  boundingBox = new Rectangle(0, 0, height, width);
   
   growFood();
   
@@ -29,10 +35,13 @@ void setup ()
       paths[i][j] = 0;
     }
   }
+  lasttime = millis();
 }
 
 void draw ()
 {
+  println(millis() - lasttime);
+  lasttime = millis();
   if (mousePressed && mouseButton == RIGHT) food[mouseX][mouseY] = true;
   
   background(255);
@@ -41,23 +50,38 @@ void draw ()
     for (int j = 0; j < scent[i].length; j++) {
       
       if (paths[i][j] > 0.25) {
-        paths[i][j] *= 0.99;
-        if (drawPaths) {
-          stroke(255, 255 - (paths[i][j] * 20), 255 - (paths[i][j] * 20));
-          point(i, j);
-        }
+        paths[i][j] *= 0.995;
+        drawP = true;
       } else {
+        drawP = false;
         paths[i][j] = 0;
       }
       
       if (scent[i][j] > 0.25) {
-        scent[i][j] *= 0.99;
-        if (drawPaths) {
-          stroke(255 - (scent[i][j] * 20), 255, 255 - (scent[i][j] * 20));
-          point(i, j);
-        }
+        scent[i][j] *= 0.995;
+        drawS = true;
       } else {
+        drawS = false;
         scent[i][j] = 0;
+      }
+      
+      if (drawPaths && (drawP || drawS)) {
+        if (!drawP) {
+          r = map(scent[i][j], 0, 30, 255, 0);
+          g = 255;
+          b = map(scent[i][j], 0, 30, 255, 0);
+        } else if (!drawS) {
+          r = 255;
+          g = map(paths[i][j], 0, 30, 255, 0);
+          b = map(paths[i][j], 0, 30, 255, 0);
+        } else {
+          r = 255;
+          g = 255;
+          b = map(paths[i][j] + scent[i][j], 0, 30, 255, 0);
+        }
+        
+        stroke(r, g, b);
+        point(i, j);
       }
     }
   }
@@ -99,6 +123,8 @@ void keyReleased ()
     setup();
   } else if (key == 'a') {
     antHills.add(new AntHill(new QVector2D(random(40, height-40), random(40, width-40))));
+  } else if (key == 'f') {
+    growFood();
   }
 }
 
