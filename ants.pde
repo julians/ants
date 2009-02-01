@@ -33,10 +33,7 @@ void setup ()
 
 void draw ()
 {
-  if (mousePressed) {
-    if (mouseButton == LEFT) antHills.add(new AntHill(new QVector2D(mouseX, mouseY)));
-    if (mouseButton == RIGHT) food[mouseX][mouseY] = true;
-  }
+  if (mousePressed && mouseButton == RIGHT) food[mouseX][mouseY] = true;
   
   background(255);
   
@@ -81,7 +78,12 @@ void draw ()
   }
 }
 
-void keyPressed ()
+void mouseReleased ()
+{
+  if (mouseButton == LEFT) antHills.add(new AntHill(new QVector2D(mouseX, mouseY)));
+}
+
+void keyReleased ()
 {
   if (key == ' ') {
     AntHill antHill;
