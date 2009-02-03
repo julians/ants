@@ -2,7 +2,7 @@ boolean[][] food;
 float[][] scent;
 float[][] paths;
 ArrayList antHills;
-int foodValue = 600;
+int foodValue = 300;
 boolean drawObjects = true;
 boolean drawPaths = false;
 int lasttime = 0;
@@ -44,7 +44,7 @@ void draw ()
   lasttime = millis();
   if (mousePressed && mouseButton == RIGHT) food[mouseX][mouseY] = true;
   
-  background(255);
+  background(0);
   
   for (int i = 0; i < scent.length; i++) {
     for (int j = 0; j < scent[i].length; j++) {
@@ -66,18 +66,14 @@ void draw ()
       }
       
       if (drawPaths && (drawP || drawS)) {
-        if (!drawP) {
-          r = map(scent[i][j], 0, 30, 255, 0);
-          g = 255;
-          b = map(scent[i][j], 0, 30, 255, 0);
-        } else if (!drawS) {
-          r = 255;
-          g = map(paths[i][j], 0, 30, 255, 0);
-          b = map(paths[i][j], 0, 30, 255, 0);
-        } else {
-          r = 255;
-          g = 255;
-          b = map(paths[i][j] + scent[i][j], 0, 30, 255, 0);
+        r = 0;
+        g = 0;
+        b = 0;
+        if (drawP) {
+          r = map(paths[i][j], 0, 15, 0, 255);
+        }
+        if (drawS) {
+          g = map(scent[i][j], 0, 40, 0, 255);
         }
         
         stroke(r, g, b);
@@ -98,8 +94,14 @@ void draw ()
   AntHill antHill;
   for (int i = 0; i < antHills.size(); i++) {
     antHill = (AntHill) antHills.get(i);
-    antHill.draw();
+    if (antHill.dead) {
+      antHills.remove(i);
+    } else {
+      antHill.draw();
+    }
   }
+  
+  if (antHills.size() < 1) setup();
 }
 
 void mouseReleased ()

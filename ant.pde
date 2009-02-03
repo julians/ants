@@ -12,10 +12,11 @@ class Ant
   int maxAppetite = width*2;
   boolean exploring = true;
   int whiteness = 0;
-  float rangeOfSight = 10;
+  float rangeOfSight = 15;
   QVector2D nearestFood = null;
-  float rangeOfSmell = 10;
+  float rangeOfSmell = 15;
   QVector2D nearestSmell = null;
+  int timeWithoutFood = 0;
   
   QVector2D tempVector1 = new QVector2D(0, 0);
   QVector2D tempVector2 = new QVector2D(0, 0);
@@ -56,7 +57,11 @@ class Ant
       this.antHill.addFood(foodValue);
       this.hasFood = false;
     } else if (this.appetite > 0 && this.isHome()) {
-      this.appetite -= this.antHill.takeFood(2);
+      if (this.antHill.takeFood(2) != 2) {
+        this.timeWithoutFood++;
+      } else {
+        this.appetite -= 2;
+      }
     } else {
       if (this.appetite <= 0) this.leaveAntHill();
       this.go();
