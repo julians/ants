@@ -20,11 +20,15 @@ class AntHill
   
   int takeFood (int _food)
   {
-    if (this.food > _food) {
-      this.food -= _food;
-      return _food;
+    if (!unlimitedFood) {
+      if (this.food > _food) {
+        this.food -= _food;
+        return _food;
+      } else {
+        return 0;
+      }
     } else {
-      return 0;
+      return _food;
     }
   }
   
@@ -52,8 +56,6 @@ class AntHill
     }
     
     this.timer++;
-    println(this.food);
-    println(this.ants.size());
     if (this.food > 5000 && this.timer >= 600) {
       this.addAnt();
       this.timer = 0;

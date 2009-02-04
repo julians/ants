@@ -12,9 +12,9 @@ class Ant
   int maxAppetite = width*2;
   boolean exploring = true;
   int whiteness = 0;
-  float rangeOfSight = 15;
+  float rangeOfSight = 10;
   QVector2D nearestFood = null;
-  float rangeOfSmell = 15;
+  float rangeOfSmell = 10;
   QVector2D nearestSmell = null;
   int timeWithoutFood = 0;
   
